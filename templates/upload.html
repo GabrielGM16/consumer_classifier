@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cargar DataSet y Entrenar Modelo</title>
+</head>
+<body>
+    <h1>Cargar DataSet</h1>
+    <form action="/" method="POST" enctype="multipart/form-data">
+        <input type="file" name="file" accept=".csv" required><br><br>
+        <button type="submit">Cargar DataSet</button>
+    </form>
+
+    {% if data %}
+    <h2>Datos Cargados:</h2>
+    <div>{{ data | safe }}</div>
+    
+    <h2>Iniciar Entrenamiento</h2>
+    <a href="/train">Entrenar Algoritmo</a>
+    {% endif %}
+</body>
+</html>

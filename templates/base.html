@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consumer App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Consumer App</h1>
+        <nav>
+            <a href="/">Inicio</a>
+            <a href="/upload">Entrenar Modelo</a>
+            <a href="/predict">Predicción</a>
+        </nav>
+    </header>
+
+    <div class="main-content">
+        <main class="container">
+            {% block content %}
+            {% endblock %}
+        </main>
+    </div>
+
+    <footer>
+        <p>© 2024 Consumer App</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,166 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #121212;
+    color: #FFFFFF;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+header {
+    background-color: #1F1F1F;
+    padding: 20px;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    position: fixed;
+    box-shadow: 0 0 10px #00FF00;
+    height: 80px; /* Altura fija */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+h1 {
+    color: #00FF00;
+    margin: 0;
+}
+
+nav {
+    margin-top: 0;
+}
+
+nav a {
+    color: #00FF00;
+    text-decoration: none;
+    font-size: 1.2rem;
+    background-color: #1F1F1F;
+    padding: 10px 15px;
+    border-radius: 5px;
+    margin: 0 10px;
+    display: inline-block;
+}
+
+nav a:hover {
+    background-color: #00FFFF;
+    color: #000;
+}
+
+.main-content {
+    margin-top: 120px;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #1F1F1F;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #00FF00;
+}
+
+label {
+    display: block;
+    margin: 15px 0 5px;
+    font-size: 1.2rem;
+    color: #00FFFF;
+}
+
+input[type="number"],
+input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    background-color: #333333;
+    color: #FFFFFF;
+    margin-bottom: 20px;
+}
+
+button {
+    background-color: #00FF00;
+    color: #000;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #00FFFF;
+}
+
+footer {
+    margin-top: 20px;
+    color: #00FFFF;
+}
+
+@media screen and (max-width: 768px) {
+    .container {
+        width: 90%;
+        padding: 15px;
+    }
+
+    nav a {
+        margin: 5px;
+        padding: 8px 12px;
+    }
+
+    button {
+        width: 100%;
+    }
+}
+
+/* Estilos para la card emergente (modal) */
+.modal {
+    display: none; /* Oculto por defecto */
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* Fondo oscuro */
+}
+
+.modal-content {
+    background: linear-gradient(45deg, #00FF00, #00FFFF, #FF00FF);
+    animation: gradientBG 5s ease infinite;
+    color: #000;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px #00FF00;
+    max-width: 500px;
+    margin: 100px auto;
+    text-align: center;
+    font-size: 1.5rem;
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.modal-content h3 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: #000;
+}
+
+.modal-close {
+    background-color: #FF0000;
+    color: #FFF;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.modal-close:hover {
+    background-color: #FF6666;
+}

@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Entrenamiento del Modelo</h2>
+<form action="/upload" method="POST" enctype="multipart/form-data">
+    <label for="file">Subir archivo CSV:</label>
+    <input type="file" name="file" accept=".csv" required><br><br>
+    <button type="submit">Cargar y Ver Datos</button>
+</form>
+
+{% if data %}
+<h3>Datos Cargados:</h3>
+<div>{{ data | safe }}</div>
+<a href="/train"><button>Iniciar Entrenamiento</button></a>
+{% endif %}
+
+{% if accuracy %}
+<p>{{ accuracy }}</p>
+<a href="/"><button>Volver al inicio</button></a>
+<a href="/predict"><button>Ir a Predicción</button></a>
+{% endif %}
+{% endblock %}

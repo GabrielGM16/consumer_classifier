@@ -9,42 +9,44 @@ import os
 app = Flask(__name__)
 app.secret_key = 'super_secret_key'
 
-@app.route('/', methods=['GET', 'POST'])
+# Mapeo de tipos de consumidores
+consumer_types = {
+    1: "Consumidor tradicional",
+    2: "Consumidor emocional",
+    3: "Consumidor escéptico",
+    4: "Consumidor impulsivo",
+    5: "Consumidor indeciso"
+}
+
+@app.route('/')
 def index():
+    return render_template('index.html')
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload():
     if request.method == 'POST':
         file = request.files['file']
         if file and file.filename.endswith('.csv'):
-            # Asegúrate de que el directorio existe
             temp_directory = os.path.join('static', 'temp')
             if not os.path.exists(temp_directory):
-                os.makedirs(temp_directory)  # Crea el directorio si no existe
+                os.makedirs(temp_directory)
 
             filepath = os.path.join(temp_directory, file.filename)
             file.save(filepath)
-            session['filepath'] = filepath  # Guarda la ruta del archivo en la sesión
+            session['filepath'] = filepath
             data = pd.read_csv(filepath)
-            return render_template('upload.html', data=data.to_html())
-    return render_template('upload.html')
+            return render_template('train.html', data=data.to_html())
+    return render_template('train.html')
 
 @app.route('/train', methods=['GET'])
 def train():
-    # Obtener la ruta del archivo subido desde la sesión
     file_path = session.get('filepath')
     if file_path and os.path.exists(file_path):
-        # Cargar los datos del CSV
         df = pd.read_csv(file_path)
-
-        # Excluir la columna de nombres, asumiendo que es la primera columna
-        X = df.iloc[:, 1:]  # Excluye la primera columna (los nombres)
-        y = df.iloc[:, 1]  # Suponemos que la columna objetivo es la primera pregunta (puedes ajustar esto según tu lógica)
-
-        # Convertir todas las columnas restantes a números
+        X = df.iloc[:, 1:]
+        y = df.iloc[:, 1]
         X = X.apply(pd.to_numeric, errors='coerce')
-
-        # Eliminar filas con valores NaN que pueden haber sido creados por la conversión
         X = X.dropna()
-
-        # Verificar que queden datos para entrenar
         if X.empty or y.empty:
             return "No hay suficientes datos numéricos para entrenar el modelo."
 
@@ -55,17 +57,39 @@ def train():
 
             model_filename = 'models/consumer_model.pkl'
             if not os.path.exists('models'):
-                os.makedirs('models')  # Crea la carpeta models si no existe
+                os.makedirs('models')
             joblib.dump(model, model_filename)
 
             y_pred = model.predict(X_test)
             accuracy = accuracy_score(y_test, y_pred)
 
-            return f"Entrenamiento completo. Precisión del modelo: {accuracy * 100:.2f}%"
+            # Renderiza una página con la precisión y opciones para volver al inicio o ir a predicción
+            return render_template('train_result.html', accuracy=f"Entrenamiento completo. Precisión del modelo: {accuracy * 100:.2f}%")
         except ValueError as e:
             return f"Error al entrenar el modelo: {str(e)}"
     else:
-        return "El archivo no está disponible para el entrenamiento. Asegúrate de haber cargado un archivo válido."
+        return "El archivo no está disponible para el entrenamiento."
+
+
+@app.route('/predict', methods=['GET', 'POST'])
+def predict():
+    if request.method == 'POST':
+        try:
+            model_filename = 'models/consumer_model.pkl'
+            model = joblib.load(model_filename)
+
+            features = [request.form['q1'], request.form['q2'], request.form['q3'],
+                        request.form['q4'], request.form['q5'], request.form['q6'],
+                        request.form['q7']]
+
+            features = [[float(x) for x in features]]
+            prediction = model.predict(features)
+            consumer_type = consumer_types.get(prediction[0], "Tipo de consumidor no reconocido")
+
+            return render_template('predict.html', result=f"Eres un {consumer_type}")
+        except Exception as e:
+            return f"Error al hacer la predicción: {str(e)}"
+    return render_template('predict.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -21,35 +21,51 @@ def index():
 
             filepath = os.path.join(temp_directory, file.filename)
             file.save(filepath)
-            session['filepath'] = filepath
+            session['filepath'] = filepath  # Guarda la ruta del archivo en la sesión
             data = pd.read_csv(filepath)
             return render_template('upload.html', data=data.to_html())
     return render_template('upload.html')
 
 @app.route('/train', methods=['GET'])
 def train():
-    if 'filepath' in session:
-        filepath = session['filepath']
-        if os.path.exists(filepath):
-            data = pd.read_csv(filepath)
-            X = data.iloc[:, :-1]
-            y = data.iloc[:, -1]
+    # Obtener la ruta del archivo subido desde la sesión
+    file_path = session.get('filepath')
+    if file_path and os.path.exists(file_path):
+        # Cargar los datos del CSV
+        df = pd.read_csv(file_path)
 
+        # Excluir la columna de nombres, asumiendo que es la primera columna
+        X = df.iloc[:, 1:]  # Excluye la primera columna (los nombres)
+        y = df.iloc[:, 1]  # Suponemos que la columna objetivo es la primera pregunta (puedes ajustar esto según tu lógica)
+
+        # Convertir todas las columnas restantes a números
+        X = X.apply(pd.to_numeric, errors='coerce')
+
+        # Eliminar filas con valores NaN que pueden haber sido creados por la conversión
+        X = X.dropna()
+
+        # Verificar que queden datos para entrenar
+        if X.empty or y.empty:
+            return "No hay suficientes datos numéricos para entrenar el modelo."
+
+        try:
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
             model = RandomForestClassifier()
             model.fit(X_train, y_train)
 
             model_filename = 'models/consumer_model.pkl'
+            if not os.path.exists('models'):
+                os.makedirs('models')  # Crea la carpeta models si no existe
             joblib.dump(model, model_filename)
 
             y_pred = model.predict(X_test)
             accuracy = accuracy_score(y_test, y_pred)
 
             return f"Entrenamiento completo. Precisión del modelo: {accuracy * 100:.2f}%"
-        else:
-            return "El archivo ya no está disponible para el entrenamiento."
+        except ValueError as e:
+            return f"Error al entrenar el modelo: {str(e)}"
     else:
-        return "No se ha subido ningún archivo. Por favor, sube un archivo para entrenar el modelo."
+        return "El archivo no está disponible para el entrenamiento. Asegúrate de haber cargado un archivo válido."
 
 if __name__ == '__main__':
     app.run(debug=True)

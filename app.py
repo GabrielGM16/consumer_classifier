@@ -73,23 +73,38 @@ def train():
 
 @app.route('/predict', methods=['GET', 'POST'])
 def predict():
+    model_filename = 'models/consumer_model.pkl'
+    
+    if not os.path.exists(model_filename):
+        # Si el modelo no existe, mostrar mensaje de error y redirigir a la carga de datos
+        return render_template('predict.html', error="El modelo no está entrenado. Serás redirigido para cargar un set de datos y entrenarlo.")
+
     if request.method == 'POST':
         try:
-            model_filename = 'models/consumer_model.pkl'
+            # Cargar el modelo entrenado
             model = joblib.load(model_filename)
 
+            # Recoger las respuestas del formulario
             features = [request.form['q1'], request.form['q2'], request.form['q3'],
                         request.form['q4'], request.form['q5'], request.form['q6'],
                         request.form['q7']]
 
+            # Convertir las características a formato numérico
             features = [[float(x) for x in features]]
+
+            # Realizar la predicción
             prediction = model.predict(features)
+
+            # Obtener el tipo de consumidor a partir de la predicción
             consumer_type = consumer_types.get(prediction[0], "Tipo de consumidor no reconocido")
 
             return render_template('predict.html', result=f"Eres un {consumer_type}")
         except Exception as e:
             return f"Error al hacer la predicción: {str(e)}"
+
     return render_template('predict.html')
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

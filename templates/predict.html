@@ -27,7 +27,7 @@
     <button type="submit">Enviar</button>
 </form>
 
-<!-- Modal para mostrar el resultado -->
+<!-- Modal para mostrar el resultado o el error -->
 <div id="resultModal" class="modal">
     <div class="modal-content">
         <h3>Resultado</h3>
@@ -36,17 +36,36 @@
     </div>
 </div>
 
+<div id="errorModal" class="modal">
+    <div class="modal-content">
+        <h3>Error</h3>
+        <p>{{ error }}</p>
+        <p>Serás redirigido para cargar un set de datos y entrenar el modelo.</p>
+        <button class="modal-close" onclick="closeErrorModal()">Cerrar</button>
+    </div>
+</div>
+
 <script>
-    // Función para abrir el modal si hay resultado
+    // Función para abrir el modal si hay resultado o error
     window.onload = function() {
         {% if result %}
             document.getElementById("resultModal").style.display = "block";
+        {% elif error %}
+            document.getElementById("errorModal").style.display = "block";
+            setTimeout(function() {
+                window.location.href = "/upload"; // Redirigir a la página de carga de datos
+            }, 5000);  // Redirige después de 5 segundos
         {% endif %}
     };
 
-    // Función para cerrar el modal
+    // Función para cerrar el modal del resultado
     function closeModal() {
         document.getElementById("resultModal").style.display = "none";
+    }
+
+    // Función para cerrar el modal de error
+    function closeErrorModal() {
+        document.getElementById("errorModal").style.display = "none";
     }
 </script>
 

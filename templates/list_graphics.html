@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Gráficas Disponibles</h2>
+
+<form action="/export_pdf" method="POST">
+    {% for graphic in graphics %}
+        <input type="checkbox" name="graphics" value="{{ graphic }}"> {{ graphic }}<br>
+        <img src="{{ url_for('static', filename='graphics/' ~ graphic) }}" width="200"><br><br>
+    {% endfor %}
+    <button type="submit">Exportar a PDF</button>
+</form>
+
+{% endblock %}

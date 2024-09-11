@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Generar Gráfica K-Means</h2>
+
+<form action="/generate_kmeans" method="POST">
+    <button type="submit">Generar Gráfica</button>
+</form>
+
+{% if graph_path %}
+    <h3>Gráfica Generada:</h3>
+    <img src="{{ url_for('static', filename='graphics/' ~ graph_path.split('/')[-1]) }}" alt="Gráfica K-Means">
+{% endif %}
+
+{% endblock %}
